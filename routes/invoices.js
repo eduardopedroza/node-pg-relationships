@@ -1,11 +1,12 @@
 const express = require('express');
-const router = new express.router();
+const router = express.Router();
 const ExpressError = require('../expressError');
 const db = require('../db');
 
 router.get('/', async (req, res, next) => {
   try {
     const results = await db.query(`SELECT * FROM invoices`);
+    if (results.rowCount === 0) throw new ExpressError(`No invoices found`, 404);
     return res.json({
       invoices: results.rows
     })
@@ -75,3 +76,5 @@ router.delete('/:id', async (req, res, next) => {
     return next(e)
   }
 })
+
+module.exports = router;
